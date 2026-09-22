@@ -1,11 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends, status, Security
-from fastapi.security import OAuth2PasswordRequestForm, HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 
 from src.database.db import get_db
 from src.database.models import User
-from src.schemas.user import UserRegisterSchema, UserResponseSchema, TokenSchema
+from src.schemas.user import UserRegisterSchema, UserResponseSchema, TokenSchema, UserLoginSchema
 from src.services.auth import (
     get_password_hash,
     verify_password,
@@ -35,8 +35,8 @@ def signup(body: UserRegisterSchema, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=TokenSchema)
-def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == body.username).first()
+def login(body: UserLoginSchema, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == body.email).first()
     if user is None or not verify_password(body.password, user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
 

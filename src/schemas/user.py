@@ -5,6 +5,11 @@ class UserRegisterSchema(BaseModel):
     email: EmailStr
     password: str
 
+# Логін
+class UserLoginSchema(BaseModel):
+    email: EmailStr
+    password: str
+
 # Те, що сервер повертає клієнту (Без хешованого паролю)
 class UserResponseSchema(BaseModel):
     id: int
