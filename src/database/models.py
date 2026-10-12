@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey, false
 from sqlalchemy.orm import relationship
 from src.database.db import Base
+
 
 class User(Base):
     __tablename__ = "users"
@@ -9,6 +10,8 @@ class User(Base):
     email = Column(String(250), nullable=False, unique=True, index=True)
     password = Column(String(255), nullable=False)
     refresh_token = Column(String(255), nullable=True)
+    confirmed = Column(Boolean, nullable=False, default=False, server_default=false())
+    avatar = Column(String(255), nullable=True)
 
     contacts = relationship("Contact", back_populates="owner", cascade="all, delete-orphan")
 
@@ -24,7 +27,6 @@ class Contact(Base):
     birthday = Column(Date)
     additional_info = Column(String(250), nullable=True)
 
-    
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    
+
     owner = relationship("User", back_populates="contacts")

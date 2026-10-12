@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 # Те, що приходить від клієнта при реєстрації/логіні
 class UserRegisterSchema(BaseModel):
@@ -23,3 +23,16 @@ class TokenSchema(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
+
+class RequestEmailSchema(BaseModel):
+    email: EmailStr
+
+class UserDetailSchema(BaseModel):
+    id: int
+    email: EmailStr
+    avatar: str | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+class ResetPasswordSchema(BaseModel):
+    new_password: str = Field(min_length=6, max_length=50)
