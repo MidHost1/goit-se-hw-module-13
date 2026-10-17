@@ -6,6 +6,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 
+from src.services.cache import invalidate_user
 from src.database.db import get_db
 from src.database.models import User
 from src.schemas.user import (
@@ -144,4 +145,7 @@ def reset_password(token: str, body: ResetPasswordSchema, db: Session = Depends(
     user.password = get_password_hash(body.new_password)
     user.refresh_token = None  # старі refresh-токени більше не діють
     db.commit()
+
+    invalidate_user(user.email)
+    
     return {"message": "Password updated successfully"}
